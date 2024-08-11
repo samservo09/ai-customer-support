@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
-import OpenAI from "openai";
+import { NextResponse } from "next/server"; // Import NextResponse from Next.js for handling responses
+import OpenAI from "openai"; // Import OpenAI library for interacting with the OpenAI API
 
+// System prompt for the AI, providing guidelines on how to respond to users
 const systemPrompt = `You are a customer support chatbot for TripQuest, an online booking site for travel services. Your primary function is to assist users with their travel-related inquiries in a friendly and efficient manner.
 
 Key Responsibilities:
@@ -43,5 +44,15 @@ Do not collect or store personal data from users.
 Prioritize user safety and privacy in all interactions.`
 
 
-//post-route
-export 
+// POST function to handle incoming requests
+export async function POST(req){
+    const openai = new OpenAI() // Create a new instance of the OpenAI client
+    const data = await req.json() // Parse the JSON body of the incoming request
+
+    // Create a chat completion request to the OpenAI API
+    const completion = await openai.chat.completions.create({
+        messages: [{role: 'system', content: systemPrompt}, ...data],
+        model: 'gpt-3.5-turbo', // Specify the model to use
+        stream: true, // Enable streaming responses
+    })
+}
