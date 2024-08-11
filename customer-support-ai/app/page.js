@@ -3,7 +3,7 @@ import { Box, Button, Stack, TextField } from "@mui/material";
 import Image from "next/image";
 import { useState } from "react";
 
-export default function Home() {
+export default function Home() {{
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
@@ -11,10 +11,13 @@ export default function Home() {
     },
   ])
   const [message, setMessage] = useState('')
+  // Loading state and the ability to send messages by pressing Enter
+  const [isloading, setIsLoading] = useState(false)
 
   // handles sending user message to the server
   const sendMessage = async () => {
-    if (!message.trim()) return; // Don't send empty messages
+    if (!message.trim() || isLoading) return; // Don't send empty messages
+    setIsLoading(true)
 
     setMessage('')  // Clear the input field
     setMessages((messages) => [
@@ -39,20 +42,20 @@ export default function Home() {
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
 
-      while (true) P
-      const { done, value } = await reader.read()
-      if (done) break
-      const text = decoder.decode(value, { stream: true })
-      setMessages((messages) => {
-        let lastMessage = messages[messages.length - 1]
-        let otherMessages = messages.slice(0, messages.length - 1)
-        return [
-          ...otherMessages,
-          { ...lastMessage, content: lastMessage.content + text },
-        ]
-      })
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        const text = decoder.decode(value, { stream: true })
+        setMessages((messages) => {
+          let lastMessage = messages[messages.length - 1]
+          let otherMessages = messages.slice(0, messages.length - 1)
+          return [
+            ...otherMessages,
+            { ...lastMessage, content: lastMessage.content + text },
+          ]
+        })
+      }
     }
-
     catch (error) {
       console.error('Error:', error)
       setMessages((messages) => [
@@ -89,9 +92,19 @@ export default function Home() {
         })
         return reader.read().then(processText)  // Continue reading the next chunk of the response
       })
-    })  
+    })
+
+    setIsLoading(false)
   }
 
+  const handlekeyPress = (event) => {
+    if (event.key === 'Enter' && !event.shiftkey){
+      event.preventDefault()
+      sendMessage()
+    }
+  }
+
+  
   return (
     <Box
       width="100vw"
@@ -153,5 +166,4 @@ export default function Home() {
       </Stack>
     </Box>
   )
-
 }
