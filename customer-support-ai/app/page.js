@@ -104,6 +104,18 @@ export default function Home() {{
     }
   }
 
+  // Add auto-scrolling to ensure recent messages are always visible
+
+  const messagesEndRef = useRef(null)
+
+  const scrollToBotton = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
   
   return (
     <Box
