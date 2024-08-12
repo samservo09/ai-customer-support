@@ -61,7 +61,7 @@ export default function Home() {
       ])
     }
     setIsLoading(false)
-  };
+  }
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -69,6 +69,16 @@ export default function Home() {
       sendMessage()
     }
   }
+
+const messagesEndRef = useRef(null)
+
+const scrollToBottom = () => {
+  messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+}
+
+useEffect(() => {
+  scrollToBottom()
+}, [messages])
 
   return (
     <Box
